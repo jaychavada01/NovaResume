@@ -8,15 +8,16 @@ import { ReactQueryDevtools } from "react-query/devtools";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MainSpinner from "./components/MainSpinner";
 
 const App = () => {
   const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<MainSpinner/>}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/*" element={<Home />} />
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </Suspense>
