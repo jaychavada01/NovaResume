@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaTrash, FaUpload } from "react-icons/fa";
 import { DotLoader } from "react-spinners";
 import { toast } from "react-toastify";
@@ -9,10 +9,12 @@ import {
   ref,
   deleteObject,
 } from "firebase/storage";
-import { initialTags } from "../utils/helpers";
+import { adminIDs, initialTags } from "../utils/helpers";
 import { serverTimestamp } from "firebase/database";
 import useTemplates from "../hooks/useTemplates";
-import { doc, setDoc } from "firebase/firestore";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
+import useUser from "../hooks/useUser";
+import { useNavigate } from "react-router-dom";
 
 const CreateTemplate = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +29,6 @@ const CreateTemplate = () => {
   });
 
   const [selectedTags, setselectedTags] = useState([]);
-  const [tempID, setTempID] = useState("Template1");
 
   const {
     data: templates,
@@ -36,11 +37,8 @@ const CreateTemplate = () => {
     refetch: templatesRefetch,
   } = useTemplates();
 
-  useEffect(() => {
-    if (templates && templates.length > 0) {
-      setTempID(`Template${templates.length + 1}`);
-    }
-  }, [templates]);
+  const {data: user, isLoading} = useUser()
+  const navigate = useNavigate();
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -132,22 +130,45 @@ const CreateTemplate = () => {
       title: formData.title,
       imageURL: imageAsset.uri,
       tags: selectedTags,
-      name: tempID,
-      timeStamp: timeStamp,
+      name:
+        templates && templates.length > 0
+          ? `Template${templates.length + 1}`
+          : "Template1",
+      timestamp: timeStamp,
     };
     await setDoc(doc(db, "templates", id), _doc)
       .then(() => {
-        setFormData((prev) => ({ ...prev, title: "", imageURL: "" }));
+        setFormData((prevData) => ({ ...prevData, title: "", imageURL: "" }));
         setImageAsset((prev) => ({ ...prev, uri: null }));
         setselectedTags([]);
         templatesRefetch();
-        setTempID(`Template${templates.length + 2}`); // Update the tempID here
         toast.success("Data Pushed to Cloud");
       })
       .catch((err) => {
         console.log(`Error: ${err.message}`);
       });
   };
+
+  // remove data from cloud
+    const removeTemplate = async (template) => {
+      const deleteRef = ref(storage, template?.imageURL)
+      await deleteObject(deleteRef).then(async () => {
+        await deleteDoc(doc(db, "templates", template?._id))
+          .then(() => {
+            toast.success("Template deleted from cloud successfully");
+            templatesRefetch();
+          })
+          .catch((err) => {
+            console.log(`Error: ${err.message}`);
+          });
+      })
+    };
+
+    useEffect(()=>{
+      if(!isLoading && !adminIDs.includes(user?.uid)){
+        navigate("/", {replace: true})
+      }
+    },[user, isLoading])
 
   return (
     <div className="w-full px-4 lg:px-10 2xl:px-32 py-4 grid grid-cols-1 lg:grid-cols-12">
@@ -158,11 +179,15 @@ const CreateTemplate = () => {
         </div>
 
         {/* template id section */}
-        <div className="w-full flex items-center  justify-end">
+        <div className="w-full flex items-center justify-end">
           <p className="text-base text-textLight uppercase font-semibold">
-            TempID :
+            TempID :{" "}
           </p>
-          <p className="text-sm text-textDark capitalize font-bold">{tempID}</p>
+          <p className="text-sm text-textDark capitalize font-bold">
+            {templates && templates.length > 0
+              ? `Template${templates.length + 1}`
+              : "Template1"}
+          </p>
         </div>
 
         {/* template tile section */}
@@ -256,7 +281,52 @@ const CreateTemplate = () => {
       </div>
 
       {/* right container */}
-      <div className="col-span-12 lg:col-span-8 2xl:col-span-9">2</div>
+      <div className="col-span-12 lg:col-span-8 2xl:col-span-9 px-2 w-full flex-1 py-4">
+        {templatesIsLoading ? (
+          <React.Fragment>
+            <div className="w-full h-full flex items-center justify-center">
+              <DotLoader color="#498FCD" size={40} />
+            </div>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {templates && templates.length > 0 ? (
+              <React.Fragment>
+                <div className="w-full h-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-4 sm:gap-4">
+                  {templates?.map((template) => (
+                    <div
+                      key={template._id}
+                      className="w-full h-[500px] rounded-md overflow-hidden relative"
+                    >
+                      <img
+                        src={template?.imageURL}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                      {/* delete action */}
+                      <div
+                        className="absolute top-4 right-4 w-8 h-8 rounded-md flex items-center justify-center bg-red-500 cursor-pointer"
+                        onClick={() => removeTemplate(template)}
+                      >
+                        <FaTrash className="text-sm text-white" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <div className="w-full h-full flex flex-col gap-6 items-center justify-center">
+                  <DotLoader color="#498FCD" size={40} />
+                  <p className="text-xl tracking-wider capitalize text-textPrimary">
+                    No data
+                  </p>
+                </div>
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        )}
+      </div>
     </div>
   );
 };
