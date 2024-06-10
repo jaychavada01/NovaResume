@@ -9,15 +9,33 @@ import { FadeInOutWithOpacity, slideUpDownMenu } from "../animation/Animate";
 import { useQueryClient } from "react-query";
 import { auth } from "../config/firebase.config";
 import { adminIDs } from "../utils/helpers";
+import useFilters from "../hooks/useFilters";
 
 const Header = () => {
   const { data, isLoading, isError } = useUser();
   const [isMenu, setIsMenu] = useState(false);
 
   const queryClient = useQueryClient();
+
+  const { data: filterData } = useFilters();
+
   const signOutUser = async () => {
     await auth.signOut().then(() => {
       queryClient.setQueryData("user", null);
+    });
+  };
+
+  const handleSearchTerm = (e) => {
+    queryClient.setQueryData("globalFilter", {
+      ...queryClient.getQueryData("globalFilter"),
+      searchTerm: e.target.value,
+    });
+  };
+
+  const clearFilter = () => {
+    queryClient.setQueryData("globalFilter", {
+      ...queryClient.getQueryData("globalFilter"),
+      searchTerm: "",
     });
   };
 
@@ -29,10 +47,26 @@ const Header = () => {
 
       <div className="flex-1 border border-gray-300 px-4 py-1 rounded-md flex items-center justify-between bg-gray-200">
         <input
+          onChange={handleSearchTerm}
+          value={
+            filterData && filterData.searchTerm ? filterData.searchTerm : ""
+          }
           type="text"
           placeholder="Search Here..."
           className="flex-1 h-10 bg-transparent text-base font-semibold outline-none border-none"
         />
+
+        <AnimatePresence>
+          {filterData && filterData.searchTerm.length > 0 && (
+            <motion.div
+            onClick={clearFilter}
+              {...FadeInOutWithOpacity}
+              className="w-8 h-8 flex items-center justify-center bg-gray-300 rounded-md cursor-pointer active:scale-95 duration-150"
+            >
+              <p className="text-2xl text-black">x</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <AnimatePresence>
@@ -108,7 +142,7 @@ const Header = () => {
                             Add New Template
                           </Link>
                         )}
-                        
+
                         <div
                           className="w-full px-2 py-2 border-t border-gray-300 flex items-center justify-between group cursor-pointer"
                           onClick={signOutUser}

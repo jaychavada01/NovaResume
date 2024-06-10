@@ -292,11 +292,11 @@ const CreateTemplate = () => {
           <React.Fragment>
             {templates && templates.length > 0 ? (
               <React.Fragment>
-                <div className="w-full h-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-4 sm:gap-4">
+                <div className="w-full h-full grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-4">
                   {templates?.map((template) => (
                     <div
                       key={template._id}
-                      className="w-full h-[500px] rounded-md overflow-hidden relative"
+                      className="w-full h-[500px] rounded-md overflow-hidden relative 2xl:h-[340px]"
                     >
                       <img
                         src={template?.imageURL}
