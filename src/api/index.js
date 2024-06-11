@@ -1,12 +1,16 @@
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   doc,
   onSnapshot,
   orderBy,
   query,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { auth, db } from "../config/firebase.config";
+import { toast } from "react-toastify";
 
 export const getUserDetail = () => {
   return new Promise((resolve, reject) => {
@@ -57,4 +61,40 @@ export const getTemplates = () => {
     );
     return unsubscribe;
   });
+};
+
+export const saveToCollections = async (user, data) => {
+  const docRef = doc(db, "users", user?.uid);
+
+  if (!user?.collections?.includes(data?._id)) {
+    await updateDoc(docRef, {
+      collections: arrayUnion(data?._id),
+    })
+      .then(() => toast.success("Saved to Collections"))
+      .catch((err) => toast.error(`Error: ${err.message}`));
+  } else {
+    await updateDoc(docRef, {
+      collections: arrayRemove(data?._id),
+    })
+      .then(() => toast.success("Removed from Collections"))
+      .catch((err) => toast.error(`Error: ${err.message}`));
+  }
+};
+
+export const saveToFavourites = async (user, data) => {
+  const docRef = doc(db, "templates", data?._id);
+
+  if (!data?.favourites?.includes(user?.uid)) {
+    await updateDoc(docRef, {
+      favourites: arrayUnion(user?.uid),
+    })
+      .then(() => toast.success("Saved to Favourites"))
+      .catch((err) => toast.error(`Error: ${err.message}`));
+  } else {
+    await updateDoc(docRef, {
+      favourites: arrayRemove(user?.uid),
+    })
+      .then(() => toast.success("Removed from Favourites"))
+      .catch((err) => toast.error(`Error: ${err.message}`));
+  }
 };
