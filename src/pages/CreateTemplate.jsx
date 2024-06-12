@@ -14,7 +14,8 @@ import { serverTimestamp } from "firebase/database";
 import useTemplates from "../hooks/useTemplates";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import useUser from "../hooks/useUser";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaHouse } from "react-icons/fa6";
 
 const CreateTemplate = () => {
   const [formData, setFormData] = useState({
@@ -174,6 +175,16 @@ const CreateTemplate = () => {
     <div className="w-full px-4 lg:px-10 2xl:px-32 py-4 grid grid-cols-1 lg:grid-cols-12">
       {/* left container */}
       <div className="col-span-12 lg:col-span-4 2xl:col-span-3 w-full flex-1 flex items-center justify-start flex-col gap-4 px-2">
+        <div className="w-full flex items-center gap-1">
+          <Link
+            to={"/"}
+            className="flex items-center justify-center gap-2 text-txtPrimary"
+          >
+            <FaHouse />
+            Home
+          </Link>
+          <p className="text-txtPrimary">/ CreateNewTemplate</p>
+        </div>
         <div className="w-full">
           <p className="text-lg text-textPrimary">Create a new Template </p>
         </div>

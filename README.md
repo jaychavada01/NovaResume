@@ -1,8 +1,25 @@
-# React + Vite
+# NovaResume - Full Stack App with the use of React Query and Firebase
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+`NovaResume is a powerful and intuitive application designed to streamline the resume creation process.`
 
-Currently, two official plugins are available:
+## Dependencies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **firebase**: A comprehensive app development platform that provides a suite of tools and services for building and managing high-quality apps.
+
+---
+- **framer-motion**: A production-ready motion library for React that allows seamless animations and transitions.
+---
+- **html-to-image**: A library that converts HTML content to an image, enabling easy integration of visual elements.
+---
+- **jspdf**: A library that generates PDFs directly from JavaScript, facilitating dynamic PDF creation and manipulation.
+---
+- **react-query**: A powerful library for managing and caching asynchronous data in React applications, improving performance and developer experience.
+---
+- **react-router-dom**: A routing library for React applications that enables navigation and rendering of components based on the URL.
+---
+- **react-spinners**: A collection of lightweight and customizable loading spinner components for React applications.
+---
+- **react-toastify**: A library that provides an easy-to-use and customizable notification system for React applications.
+---
+- **tailwind-scrollbar**: A Tailwind CSS plugin that provides utility classes for styling scrollbars.
+---

@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import AuthPage from "./pages/AuthPage";
 
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,7 +21,6 @@ const App = () => {
         </Routes>
       </Suspense>
       <ToastContainer position="top-right" theme="dark" />
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
