@@ -2,6 +2,8 @@
 
 `NovaResume is a powerful and intuitive application designed to streamline the resume creation process.`
 
+`Open App here for testing` : [NovaResume](https://novaresume-4d779.web.app/)
+
 ## Dependencies
 
 - **firebase**: A comprehensive app development platform that provides a suite of tools and services for building and managing high-quality apps.
@@ -23,3 +25,23 @@
 ---
 - **tailwind-scrollbar**: A Tailwind CSS plugin that provides utility classes for styling scrollbars.
 ---
+
+### Deployment steps:
+
+- Install Firebase CLI 
+
+```js
+npm install -g firebase-tools
+```
+
+- Initialize your project then Sign in to Google and apply this commands
+
+```js
+firebase login
+
+firebase init
+```
+- Deploy to Firebase Hosting
+```js
+firebase deploy
+```
